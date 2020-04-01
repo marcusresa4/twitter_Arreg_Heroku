@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+<nav class="navbar navbar-light bg-light">
+  <a class="navbar-brand" href="{% url 'feed' %}">Twitter Monitoring by i4Ventures</a>
+   <a href="{% url 'logout' %}"><button type="button" class="btn btn-outline-primary ">Log Out</button></a>
+</nav>
+
+    <h2 style="margin-left: 30%;margin-top: 20px">All the Tweets</h2>
+<br>
+    {% for tweet in tweets %}
+
+    <div class="media" style="margin-left: 10%">
+      <img src="{% static tweet.user.profile_picture %}" class="mr-3 picture_size" alt="profile_picture" style="width: 35px;height: 35px">
+      <div class="media-body">
+        <h5 class="mt-0"><a style="color: rgba(0,0,0,0.76)" href="{% url 'tweets_user' tweet.user.username %}">{{ tweet.user.realname }}</a>&nbsp;<div style="font-size:smaller; color: rgba(145,162,184,0.58);">{{ tweet.user.username }}</div></h5>
+        {{ tweet.text }}
+          {% for hashtags in tweet.hashtag_in_tweet.all %}
+              <a href="{% url 'tweets_hashtag' hashtags.hashtag %}">
+                {{ hashtags.hashtag }}
+            {% endfor %}
+              </a>&nbsp;
+              <br>
+              {% for impact in impacts %}
+                    {% if impact.tweet.id_tweet == tweet.id_tweet and impact.stat.type_stat == "RT" %}
+                        <a style="font-size: small ; color: dimgrey;">RT: {{ impact.stat_value }}</a>
+
+                    {% endif %}
+                      {% if impact.tweet.id_tweet == tweet.id_tweet and impact.stat.type_stat == "FAV" %}
+                        <a style="font-size: small ; color: dimgrey;">FAV: {{ impact.stat_value }}</a>
+                  {% endif %}
+              {%  endfor %}
+      </div>
+    </div>
+         <br>
+    {% endfor %}
+
+{% endblock %}
